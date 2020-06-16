@@ -1,0 +1,1404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-06-16T14:48:33Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template MongoDB percona exporter</template>
+            <name>Template MongoDB percona exporter</name>
+            <description>https://github.com/percona/mongodb_exporter</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>MongoDB</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>MongoDB page fault rate</name>
+                    <type>DEPENDENT</type>
+                    <key>mongo.page_faults</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description># TYPE mongodb_extra_info_page_faults_total gauge</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_extra_info_page_faults_total
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#3)}&gt;{$PAGE_FAULT_TH_WARN}</expression>
+                            <name>Page faults detected on {HOST.NAME}</name>
+                            <priority>AVERAGE</priority>
+                            <description>Reports the total number of page faults that require disk operations. Page faults refer to operations that require the database server to access data which isn’t available in active memory. The page_faults counter may increase dramatically during moments of poor performance and may correlate with limited memory environments and larger data sets. Limited and sporadic page faults do not necessarily indicate an issue.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>MongoDB exporter metrics</name>
+                    <type>HTTP_AGENT</type>
+                    <key>mongodbexporter.metrics</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <url>http://{HOST.IP}:9001/metrics</url>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache usage pct</name>
+                    <type>CALCULATED</type>
+                    <key>mongodb_calc_cache_usage</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(100 * last(mongod_wiredtiger_cache_bytes[total]) / last(mongod_wiredtiger_cache_max_bytes))</params>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MongoDB connections created</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_connections_metrics_created_total</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>totalCreated provides a count of all incoming connections created to the server. This number includes connections that have since closed</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_connections_metrics_created_total
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB connpool connections available</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_connpoolstats_connections_available</key>
+                    <delay>0</delay>
+                    <description>Corresponds to the total number of client connections to mongo that are currently available.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_connpoolstats_connections_available
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB connpool connections</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_connpoolstats_connection_sync</key>
+                    <delay>0</delay>
+                    <description>total number of client connections to mongo.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_connpoolstats_connection_sync
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB documents deleted</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_metrics_document_total[deleted]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_metrics_document_total{state=&quot;deleted&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB documents inserted</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_metrics_document_total[inserted]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_metrics_document_total{state=&quot;inserted&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB documents returned</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_metrics_document_total[returned]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_metrics_document_total{state=&quot;returned&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB documents updated</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_metrics_document_total[updated]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_metrics_document_total{state=&quot;updated&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl commands per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[command]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;command&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl delete per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[delete]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;delete&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl getmore per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[getmore]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;getmore&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl insert per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[insert]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;insert&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl query per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[query]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;query&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcountersRepl update per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_repl_total[update]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The opcountersRepl data structure, similar to the opcounters data structure, provides an overview of database replication operations by type and makes it possible to analyze the load on the replica in more granular manner.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_repl_total{type=&quot;update&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters commands per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[command]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;command&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters delete per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[delete]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;delete&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters getmore per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[getmore]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;getmore&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters insert per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[insert]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;insert&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters query per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[query]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;query&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB opcounters update per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_op_counters_total[update]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>database operations by type and makes it possible to analyze the load on the database in more granular manner. These numbers will grow over time and in response to database use. Analyze these values over time to track database utilization</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_op_counters_total{type=&quot;update&quot;}
+</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Resident memory size</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_process_resident_memory_bytes</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>Resident memory size in bytes.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>process_resident_memory_bytes
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Virtual memory size</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_process_virtual_memory_bytes</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>Virtual memory size in bytes.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>process_virtual_memory_bytes
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB UP (percona exporter)</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_up</key>
+                    <delay>0</delay>
+                    <description>Whether MongoDB is up.</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_up
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(1h)}=1</expression>
+                            <name>No data for percona mongodb_exporter (1h)</name>
+                            <priority>HIGH</priority>
+                            <description>Данные для percona mongodb_exporter не поступают в заббикс больше часа</description>
+                        </trigger>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}=1</recovery_expression>
+                            <name>percona mongodb_exporter cannot connect to mongodb</name>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>MongoDB global_lock_client reader</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_global_lock_client[reader]</key>
+                    <delay>0</delay>
+                    <description>The activeClients data structure provides more granular information about the number of connected clients and the operation types (e.g. read or write) performed by these clients</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_global_lock_client{type=&quot;reader&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB global_lock_client writer</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_global_lock_client[writer]</key>
+                    <delay>0</delay>
+                    <description>The activeClients data structure provides more granular information about the number of connected clients and the operation types (e.g. read or write) performed by these clients</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_global_lock_client{type=&quot;writer&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Size of oplog(current)</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_replset_oplog_size_bytes[current]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>Size of oplog in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_replset_oplog_size_bytes{type=&quot;current&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Size of oplog(storage)</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_replset_oplog_size_bytes[storage]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>Size of oplog in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_replset_oplog_size_bytes{type=&quot;storage&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache dirty</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_wiredtiger_cache_bytes[dirty]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>The current size of data in the WiredTiger Cache in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_wiredtiger_cache_bytes{type=&quot;dirty&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache internal_pages</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_wiredtiger_cache_bytes[internal_pages]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>The current size of data in the WiredTiger Cache in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_wiredtiger_cache_bytes{type=&quot;internal_pages&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache leaf_pages</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_wiredtiger_cache_bytes[leaf_pages]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>The current size of data in the WiredTiger Cache in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_wiredtiger_cache_bytes{type=&quot;leaf_pages&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache total</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_wiredtiger_cache_bytes[total]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>The current size of data in the WiredTiger Cache in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_wiredtiger_cache_bytes{type=&quot;total&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB wiredtiger_cache max</name>
+                    <type>DEPENDENT</type>
+                    <key>mongod_wiredtiger_cache_max_bytes</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>The maximum size of data in the WiredTiger Cache in bytes</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_wiredtiger_cache_max_bytes
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Current  size of oplog</name>
+                    <type>DEPENDENT</type>
+                    <key>replset_oplog_size_bytes[current]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>Current  size of oplog</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_replset_oplog_size_bytes{type=&quot;current&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>MongoDB Storage size of oplog</name>
+                    <type>DEPENDENT</type>
+                    <key>replset_oplog_size_bytes[storage]</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>b</units>
+                    <description>storage  size of oplog</description>
+                    <applications>
+                        <application>
+                            <name>MongoDB</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>mongodb_mongod_replset_oplog_size_bytes{type=&quot;storage&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>MongoDB databases</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_db_collections_lld</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>MongoDB  {#DB} collections count</name>
+                            <type>DEPENDENT</type>
+                            <key>mongodb_mongod_db_collections_total[{#DB}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Contains a count of the number of collections in that database</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>{#METRIC}{db=&quot;{#DB}&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB  {#DB} data size</name>
+                            <type>DEPENDENT</type>
+                            <key>mongodb_mongod_db_data_size_bytes[{#DB}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>b</units>
+                            <description>The total size in bytes of the uncompressed data held in this database</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_db_data_size_bytes{db=&quot;{#DB}&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB  {#DB} index count</name>
+                            <type>DEPENDENT</type>
+                            <key>mongodb_mongod_db_indexes_total[{#DB}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Contains a count of the total number of indexes across all collections in the database</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_db_indexes_total{db=&quot;{#DB}&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB  {#DB} index size</name>
+                            <type>DEPENDENT</type>
+                            <key>mongodb_mongod_db_index_size_bytes[{#DB}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>b</units>
+                            <description>The total size in bytes of all indexes created on this database</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_db_index_size_bytes{db=&quot;{#DB}&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB  {#DB} objects count</name>
+                            <type>DEPENDENT</type>
+                            <key>mongodb_mongod_db_objects_total[{#DB}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Contains a count of the number of objects (i.e. documents) in the database across all collections</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_db_objects_total{db=&quot;{#DB}&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#DB}</lld_macro>
+                            <path>$.labels['db']</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#HELP}</lld_macro>
+                            <path>$['help']</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#METRIC}</lld_macro>
+                            <path>$['name']</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_TO_JSON</type>
+                            <params>mongodb_mongod_db_collections_total{db=~&quot;.*&quot;}</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>MongoDB replicaset current node</name>
+                    <type>DEPENDENT</type>
+                    <key>mongodb_mongod_replset_my_name_lld</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>MongoDB config version</name>
+                            <type>DEPENDENT</type>
+                            <key>mongod_replset_member_config_version[{#NODENAME},{#RSNAME}]</key>
+                            <delay>0</delay>
+                            <description>The configVersion value is the replica set configuration version</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_replset_member_config_version{host=&quot;{#NODENAME}&quot;, id=&quot;{#RSNAME}&quot;}
+</params>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{change()}&lt;&gt;0</expression>
+                                    <name>MongoDB config changed</name>
+                                    <priority>WARNING</priority>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB is_hidden</name>
+                            <type>DEPENDENT</type>
+                            <key>mongod_replset_member_hidden[{#NODENAME},{#RSNAME}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_replset_member_hidden{host=&quot;{#NODENAME}&quot;, id=&quot;{#RSNAME}&quot;}
+</params>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB declared priority</name>
+                            <type>DEPENDENT</type>
+                            <key>mongod_replset_member_priority[{#NODENAME},{#RSNAME}]</key>
+                            <delay>0</delay>
+                            <description>Задекларированный приоритет. Необходим при выборе примари ноды.</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_replset_member_priority{host=&quot;{#NODENAME}&quot;, id=&quot;{#RSNAME}&quot;}
+</params>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>MongoDB member state</name>
+                            <type>DEPENDENT</type>
+                            <key>mongod_replset_member_state[{#NODENAME},{#RSNAME}]</key>
+                            <delay>0</delay>
+                            <description>The value of state is an integer between 0 and 10 that represents the replica state of the member.</description>
+                            <applications>
+                                <application>
+                                    <name>MongoDB</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Mongo Replicaset member state</name>
+                            </valuemap>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>mongodb_mongod_replset_member_state{name=&quot;{#NODENAME}&quot;, set=&quot;{#RSNAME}&quot;}
+</params>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>3600</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>mongodbexporter.metrics</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{abschange()}&gt;0</expression>
+                                    <name>RS Member state changed to {ITEM.LASTVALUE}</name>
+                                    <priority>HIGH</priority>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template MongoDB percona exporter:mongod_global_lock_client[writer].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_hidden[{#NODENAME},{#RSNAME}].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_state[{#NODENAME},{#RSNAME}].last()}=0</expression>
+                            <name>Mongodb locked, hidden and priority 0 (cannot be primary)</name>
+                            <priority>WARNING</priority>
+                            <description>The database is locked, hidden and priority set to 0</description>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template MongoDB percona exporter:mongod_global_lock_client[writer].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_hidden[{#NODENAME},{#RSNAME}].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_state[{#NODENAME},{#RSNAME}].last()}=1</expression>
+                            <name>Mongodb locked, hidden and priority 1 (primary)</name>
+                            <priority>HIGH</priority>
+                            <description>The database is locked, hidden and priority set to 1</description>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template MongoDB percona exporter:mongod_global_lock_client[writer].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_hidden[{#NODENAME},{#RSNAME}].last()}=0&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_state[{#NODENAME},{#RSNAME}].last()}=0</expression>
+                            <name>Mongodb locked, not hidden and priority (cannot be primary)</name>
+                            <priority>HIGH</priority>
+                            <description>The database is locked, hidden and priority set to 0</description>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template MongoDB percona exporter:mongod_global_lock_client[writer].last()}=1&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_hidden[{#NODENAME},{#RSNAME}].last()}=0&#13;
+and {Template MongoDB percona exporter:mongod_replset_member_state[{#NODENAME},{#RSNAME}].last()}=0</expression>
+                            <name>Mongodb locked, not hidden and priority primary</name>
+                            <priority>HIGH</priority>
+                            <description>The database is locked, hidden and priority set to 1</description>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <master_item>
+                        <key>mongodbexporter.metrics</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#HELP}</lld_macro>
+                            <path>$['help']</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#METRIC}</lld_macro>
+                            <path>$['name']</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NODENAME}</lld_macro>
+                            <path>$.labels['name']</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#RSNAME}</lld_macro>
+                            <path>$.labels['set']</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_TO_JSON</type>
+                            <params>mongodb_mongod_replset_my_name{name=~&quot;.*&quot;}</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$PAGE_FAULT_TH_WARN}</macro>
+                    <value>1</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <name>MongoDB connections</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <drawtype>FILLED_REGION</drawtype>
+                    <color>00FF00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongodb_connpoolstats_connection_sync</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>D32F2F</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongodb_connections_metrics_created_total</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>MongoDB wiredtiger cache</name>
+            <graph_items>
+                <graph_item>
+                    <color>D84315</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongod_wiredtiger_cache_bytes[dirty]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>283593</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongod_wiredtiger_cache_bytes[internal_pages]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>81C784</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongod_wiredtiger_cache_bytes[leaf_pages]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>E53935</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongod_wiredtiger_cache_bytes[total]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>00FF00</color>
+                    <item>
+                        <host>Template MongoDB percona exporter</host>
+                        <key>mongod_wiredtiger_cache_max_bytes</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+    <value_maps>
+        <value_map>
+            <name>Mongo Replicaset member state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>STARTUP</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>PRIMARY</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>SECONDARY</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>RECOVERING</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>STARTUP2</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>UNKNOWN</newvalue>
+                </mapping>
+                <mapping>
+                    <value>7</value>
+                    <newvalue>ARBITER</newvalue>
+                </mapping>
+                <mapping>
+                    <value>8</value>
+                    <newvalue>DOWN</newvalue>
+                </mapping>
+                <mapping>
+                    <value>9</value>
+                    <newvalue>ROLLBACK</newvalue>
+                </mapping>
+                <mapping>
+                    <value>10</value>
+                    <newvalue>REMOVED</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
